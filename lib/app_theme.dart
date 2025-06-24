@@ -15,7 +15,7 @@ class AppThemes {
 
     textTheme: const TextTheme(
       displayLarge: TextStyle(
-        fontSize: 32.0,
+        fontSize: 25.0,
         fontWeight: FontWeight.bold,
         color: Colors.black,
         fontFamily: 'Roboto',
@@ -79,8 +79,6 @@ class AppThemes {
     iconTheme: const IconThemeData(
       color: Color(0xFF087F23),
     ),
-
-    dividerColor: const Color(0xFFBDBDBD),
   );
 
   static final ThemeData greenFinanceDarkTheme = ThemeData(
@@ -97,7 +95,7 @@ class AppThemes {
 
     textTheme: const TextTheme(
       displayLarge: TextStyle(
-        fontSize: 32.0,
+        fontSize: 25.0,
         fontWeight: FontWeight.bold,
         color: Colors.white,
         fontFamily: 'Roboto',
@@ -153,7 +151,7 @@ class AppThemes {
 
     appBarTheme: const AppBarTheme(
       backgroundColor: Color(0xFF388E3C),
-      foregroundColor: Colors.white,
+      foregroundColor: Color(0xFF2C2C2C),
       elevation: 0,
       centerTitle: true,
     ),

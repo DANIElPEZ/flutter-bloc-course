@@ -1,3 +1,5 @@
+//definicion de los datos que se van a manejar, en la autenticacion
+
 class AuthState {
   final String email;
   final String password;

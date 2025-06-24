@@ -21,7 +21,7 @@ class ProfileOption extends StatelessWidget {
         style: Theme.of(context).textTheme.bodyLarge,
       ),
       trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-      onTap: onTap ?? () async {},
+      onTap: onTap,
     );
   }
 }
