@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 class LineChartWidget extends StatelessWidget {
-  const LineChartWidget({super.key});
+  const LineChartWidget({required this.monthlyData, super.key});
+  final List<FlSpot> monthlyData;
 
   @override
   Widget build(BuildContext context) {
@@ -13,14 +14,9 @@ class LineChartWidget extends StatelessWidget {
         // Configuración de la línea principal
         lineBarsData: [
           LineChartBarData(
-            spots: const [
-              FlSpot(0, 10), // Enero
-              FlSpot(1, 20), // Febrero
-              FlSpot(2, 30), // Marzo
-              FlSpot(3, 25), // Abril
-            ],
+            spots: monthlyData,
             isCurved: true,
-            color: theme.primaryColor, // Usa el color primario del tema
+            color: theme.primaryColor,
             barWidth: 3,
             dotData: const FlDotData(
               show: true,
@@ -39,15 +35,12 @@ class LineChartWidget extends StatelessWidget {
               showTitles: true,
               reservedSize: 40,
               getTitlesWidget: (value, meta) {
-                if (value % 10 == 0) {
                   return Text(
                     '\$${value.toInt()}k',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: Colors.grey.shade500,
                     ),
                   );
-                }
-                return const SizedBox.shrink();
               },
             ),
           ),
@@ -56,17 +49,11 @@ class LineChartWidget extends StatelessWidget {
               showTitles: true,
               reservedSize: 32,
               getTitlesWidget: (value, meta) {
-                switch (value.toInt()) {
-                  case 0:
-                    return const Text('Jan', style: TextStyle(fontSize: 12));
-                  case 1:
-                    return const Text('Feb', style: TextStyle(fontSize: 12));
-                  case 2:
-                    return const Text('Mar', style: TextStyle(fontSize: 12));
-                  case 3:
-                    return const Text('Apr', style: TextStyle(fontSize: 12));
-                }
-                return const SizedBox.shrink();
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                return Text(
+                  months[value.toInt()],
+                  style: const TextStyle(fontSize: 12),
+                );
               },
             ),
           ),
@@ -94,9 +81,9 @@ class LineChartWidget extends StatelessWidget {
 
         // Espaciado entre los puntos
         minX: 0,
-        maxX: 3,
+        maxX: 11,
         minY: 0,
-        maxY: 50,
+        maxY: monthlyData.map((e) => e.y).reduce((a, b) => a > b ? a : b)
       ),
       duration: const Duration(milliseconds: 300), // Animación de transición
       curve: Curves.easeInOut, // Curva de animación

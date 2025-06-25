@@ -1,19 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:personal_finance/models/income_expense_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:personal_finance/blocs/income_expense/income_expense_bloc.dart';
+import 'package:personal_finance/blocs/income_expense/income_expense_event.dart';
+import 'package:personal_finance/blocs/income_expense/income_expense_state.dart';
 
 class TransactionList extends StatelessWidget {
-  const TransactionList({super.key});
+  const TransactionList({super.key, required List<IncomeExpense> transactions});
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: 5, // Número de transacciones simuladas
-      itemBuilder: (context, index) {
-        return TransactionItem(
-          title: 'Transaction #$index',
-          date: '10 Jan 2022',
-          amount: '\$120.00',
-          icon: Icons.shopping_bag,
-        );
+    return BlocBuilder<IncomeExpenseBloc, IncomeExpenseState>(
+      builder: (context, state) {
+        if (state is TransactionLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is TransactionLoaded) {
+          final transactions = state.transactions;
+
+          if (transactions.isEmpty) {
+            return const Center(child: Text('No transactions found.'));
+          }
+
+          return ListView.builder(
+            itemCount: transactions.length,
+            itemBuilder: (context, index) {
+              final transaction = transactions[index];
+
+              return TransactionItem(
+                title: transaction.description,
+                date: transaction.date.toLocal().toString(),
+                amount: '\$${transaction.amount.toStringAsFixed(2)}',
+                icon: transaction.type == 'income' ? Icons.add : Icons.remove,
+                onDelete: () {
+                  context.read<IncomeExpenseBloc>().add(DeleteTransaction(transaction.id ?? ''));
+                },
+              );
+            },
+          );
+        } else if (state is TransactionError) {
+          return Center(child: Text(state.message));
+        }
+
+        return const Center(child: Text('Unknown state.'));
       },
     );
   }
@@ -24,6 +52,7 @@ class TransactionItem extends StatelessWidget {
   final String date;
   final String amount;
   final IconData icon;
+  final VoidCallback onDelete;
 
   const TransactionItem({
     super.key,
@@ -31,6 +60,7 @@ class TransactionItem extends StatelessWidget {
     required this.date,
     required this.amount,
     required this.icon,
+    required this.onDelete,
   });
 
   @override
@@ -45,17 +75,17 @@ class TransactionItem extends StatelessWidget {
           backgroundColor: Theme.of(context).primaryColorLight,
           child: Icon(icon, color: Theme.of(context).primaryColor),
         ),
-        title: Text(
-          title,
-          style: Theme.of(context).textTheme.bodyLarge,
-        ),
-        subtitle: Text(
-          date,
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-        trailing: Text(
-          amount,
-          style: Theme.of(context).textTheme.bodyLarge,
+        title: Text(title, style: Theme.of(context).textTheme.bodyLarge),
+        subtitle: Text(date, style: Theme.of(context).textTheme.bodyMedium),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(amount, style: Theme.of(context).textTheme.bodyLarge),
+            IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red),
+              onPressed: onDelete,
+            ),
+          ],
         ),
       ),
     );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:personal_finance/widgets/profile_option.dart';
 import 'package:personal_finance/widgets/profile_card.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:personal_finance/blocs/auth/auth_bloc.dart';
 import 'package:personal_finance/blocs/auth/auth_event.dart';
@@ -12,6 +13,7 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -26,9 +28,9 @@ class ProfileScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            const ProfileCard(
+            ProfileCard(
               name: 'John Doe',
-              email: 'johndoe@example.com',
+              email: user?.email ?? '',
               avatarUrl: null,
             ),
             const SizedBox(height: 16),
